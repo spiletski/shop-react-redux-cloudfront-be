@@ -1,17 +1,15 @@
-import type { AWS } from '@serverless/typescript';
+import type {AWS} from '@serverless/typescript';
 
 import getProductsList from '@functions/getProductsList';
-import getProductById from '@functions/getProductById';
-import createProduct from '@functions/createProduct';
+import getProductById from "@functions/getProductById";
 
 const serverlessConfiguration: AWS = {
-  service: 'task-4',
+  service: 'product-service',
   frameworkVersion: '3',
-  useDotenv: true,
-  plugins: ['serverless-dotenv-plugin', 'serverless-webpack', 'serverless-offline'],
+  plugins: ['serverless-auto-swagger', 'serverless-esbuild'], // , 'serverless-offline', 'serverless-webpack'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs16.x',
+    runtime: 'nodejs14.x',
     region: 'us-east-1',
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -20,20 +18,40 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      PRODUCTS_TABLE: 'products',
-      STOCKS_TABLE: 'stocks',
     },
   },
-  functions: { getProductsList, getProductById, createProduct },
-  package: { individually: true },
+  // import the function via paths
+  functions: {getProductsList, getProductById},
+  package: {individually: true},
   custom: {
-    webpack: {
-      webpackConfig: 'webpack.config.js',
-      includeModules: true,
-      packager: 'npm',
-      excludeFiles: 'src/**/*.test.js',
+    esbuild: {
+      bundle: true,
+      minify: false,
+      sourcemap: true,
+      exclude: ['aws-sdk'],
+      target: 'node14',
+      define: {'require.resolve': undefined},
+      platform: 'node',
+      concurrency: 10,
     },
-  },
+    autoswagger: {
+      // generateSwaggerOnDeploy: false,
+      title: 'Products Service',
+      typefiles: ['./src/services/products.d.ts'],
+      host: 'my8qpq3fv2.execute-api.us-east-1.amazonaws.com/dev',
+      schemes: ['https'],
+      useStage: true,
+    },
+    'serverless-offline': {
+      httpPort: 4000
+    },
+    webpack: {
+      webpackConfig: "webpack.config.js",
+      includeModules: false,
+      packager: "yarn",
+      excludeFiles: "src/**/*.test.js",
+    },
+  }
 };
 
 module.exports = serverlessConfiguration;

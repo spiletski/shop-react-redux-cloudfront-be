@@ -6,8 +6,15 @@ export default {
     {
       http: {
         method: 'get',
-        path: 'products/{productId}',
-        cors: true,
+        path: "products/{productId}",
+        description: 'Get product by id',
+        responseData: {
+          200: {
+            description: 'Product description',
+            bodyType: 'ProductResponse',
+          },
+          404: 'Product not found',
+        },
       },
     },
   ],
