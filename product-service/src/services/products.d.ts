@@ -1,15 +1,15 @@
 export type Product = {
-    "id": string;
-    "count": number;
-    "price": number;
-    "title": string;
-    "description": string;
-}
+  id: string;
+  count: number;
+  price: number;
+  title: string;
+  description: string;
+};
 
 export interface ProductsResponse {
-    products: Product[];
+  products: Product[];
 }
 
 export interface ProductResponse {
-    product: Product
+  product: Product;
 }

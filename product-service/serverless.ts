@@ -1,15 +1,17 @@
-import type {AWS} from '@serverless/typescript';
+import type { AWS } from '@serverless/typescript';
 
 import getProductsList from '@functions/getProductsList';
-import getProductById from "@functions/getProductById";
+import getProductById from '@functions/getProductById';
+import createProduct from '@functions/createProduct';
 
 const serverlessConfiguration: AWS = {
-  service: 'product-service',
+  service: 'task-4',
   frameworkVersion: '3',
-  plugins: ['serverless-auto-swagger', 'serverless-esbuild'], // , 'serverless-offline', 'serverless-webpack'],
+  useDotenv: true,
+  plugins: ['serverless-dotenv-plugin', 'serverless-webpack', 'serverless-offline'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs14.x',
+    runtime: 'nodejs16.x',
     region: 'us-east-1',
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -18,40 +20,20 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      PRODUCTS_TABLE: 'products',
+      STOCKS_TABLE: 'stocks',
     },
   },
-  // import the function via paths
-  functions: {getProductsList, getProductById},
-  package: {individually: true},
+  functions: { getProductsList, getProductById, createProduct },
+  package: { individually: true },
   custom: {
-    esbuild: {
-      bundle: true,
-      minify: false,
-      sourcemap: true,
-      exclude: ['aws-sdk'],
-      target: 'node14',
-      define: {'require.resolve': undefined},
-      platform: 'node',
-      concurrency: 10,
-    },
-    autoswagger: {
-      // generateSwaggerOnDeploy: false,
-      title: 'Products Service',
-      typefiles: ['./src/services/products.d.ts'],
-      host: 'my8qpq3fv2.execute-api.us-east-1.amazonaws.com/dev',
-      schemes: ['https'],
-      useStage: true,
-    },
-    'serverless-offline': {
-      httpPort: 4000
-    },
     webpack: {
-      webpackConfig: "webpack.config.js",
-      includeModules: false,
-      packager: "yarn",
-      excludeFiles: "src/**/*.test.js",
+      webpackConfig: 'webpack.config.js',
+      includeModules: true,
+      packager: 'npm',
+      excludeFiles: 'src/**/*.test.js',
     },
-  }
+  },
 };
 
 module.exports = serverlessConfiguration;
