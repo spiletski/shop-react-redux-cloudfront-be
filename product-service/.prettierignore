@@ -1,0 +1,4 @@
+package.json
+.serverless
+.webpack
+node_modules

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "f3d219c6-fc29-446e-9995-edf4f73dc41f",
+    "title": "chevrolet camaro",
+    "description": "chevrolet camaro, 90hp, 2950w",
+    "price": 27000
+  },
+  {
+    "id": "ddea08ca-28dd-4a35-9d4d-fd7eda7b2e5f",
+    "title": "ford mustang gl",
+    "description": "ford mustang gl, 86hp, 2790",
+    "price": 30000
+  },
+  {
+    "id": "79c65f32-1c46-4a13-bedc-983780887e23",
+    "title": "dodge rampage",
+    "description": "dodge rampage, 84hp, 2295",
+    "price": 57000
+  },
+  {
+    "id": "946bd62a-98c4-462f-8eb6-f1f697b919aa",
+    "title": "ford ranger",
+    "description": "ford ranger, 79hp, 2625",
+    "price": 43000
+  },
+  {
+    "id": "9500ef74-39e8-4a0d-b316-23f35dd67c07",
+    "title": "chevy s-10",
+    "description": "chevy s-10, 82hp, 2720",
+    "price": 31000
+  }
+]
