@@ -1,16 +1,20 @@
-import {formatJSONResponse} from '@libs/api-gateway';
-import {middyfy} from '@libs/lambda';
+import { formatJSONResponse } from '@libs/api-gateway';
+import { middyfy } from '@libs/lambda';
 import ProductService from '../../services/productService';
-import { APIGatewayProxyResult} from "aws-lambda";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
-export const getProductsList = async (): Promise<APIGatewayProxyResult> => {
-    try {
-        const products = await ProductService.getProductsList();
+export const getProductsList = async (
+  event: APIGatewayProxyEvent
+): Promise<APIGatewayProxyResult> => {
+  console.log(' getProductsList ', event);
+  try {
+    const products = await ProductService.getProductsList();
 
-        return formatJSONResponse(200, { products });
-    } catch (e) {
-        return formatJSONResponse(500, { error: e });
-    }
+    return formatJSONResponse(200, { products });
+  } catch (e) {
+    console.log(' getProductsList ', e);
+    return formatJSONResponse(500, { error: e });
+  }
 };
 
 export const main = middyfy(getProductsList);
