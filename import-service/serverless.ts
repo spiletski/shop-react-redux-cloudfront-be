@@ -1,6 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
 import importProductsFile from '@functions/importProductsFile';
+import importFileParser from "@functions/importFileParser";
 
 const serverlessConfiguration: AWS = {
   service: 'import-service',
@@ -27,7 +28,7 @@ const serverlessConfiguration: AWS = {
         Effect: "Allow",
         Action: "s3:ListBucket",
         Resource: [
-          "arn:aws:s3:::ntask-5-myshop5"
+          "arn:aws:s3:::task-5-myshop5"
         ]
       },
       {
@@ -42,7 +43,7 @@ const serverlessConfiguration: AWS = {
     ]
   },
 
-  functions: { importProductsFile },
+  functions: { importProductsFile, importFileParser },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -50,7 +51,7 @@ const serverlessConfiguration: AWS = {
       minify: false,
       sourcemap: true,
       exclude: ['aws-sdk'],
-      target: 'node14',
+      target: 'node16',
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
