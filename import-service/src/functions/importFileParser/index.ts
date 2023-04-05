@@ -5,12 +5,15 @@ export default {
     events: [
         {
             s3: {
-                bucket: 'task-5-myshop5',
-                event: "s3:ObjectCreated:*",
+                bucket: 'app-shop-bucket',
+                event: 's3:ObjectCreated:*',
                 rules: [
                     {
-                        prefix: `uploaded/`
+                        prefix: 'uploaded/'
                     },
+                    {
+                        suffix: '.csv'
+                    }
                 ],
                 existing: true
             },
