@@ -1,9 +1,8 @@
-import * as AWSMock from 'aws-sdk-mock';
-import {catalogBatchProcess, main} from './handler';
-import {APIGatewayProxyEvent, Context} from "aws-lambda";
+import { mockClient } from "aws-sdk-client-mock";
+import {DynamoDBDocumentClient, TransactWriteCommand} from "@aws-sdk/lib-dynamodb";
+import {catalogBatchProcess} from './handler';
 import {AUTOS} from "@functions/getProductsList/autos-mock";
-import ProductService from "../../services/productService";
-
+import {PublishCommand, SNSClient} from "@aws-sdk/client-sns";
 jest.mock('@middy/core', () => {
     return (handler) => {
         return {
@@ -12,33 +11,40 @@ jest.mock('@middy/core', () => {
     }
 });
 
-afterAll(() => {
-    AWSMock.restore('S3');
-});
+const ddbMock = mockClient(DynamoDBDocumentClient);
+const snsMock = mockClient(SNSClient);
 
 describe('catalogBatchProcess', () => {
-    const event = { Records: [...AUTOS.map(auto => ({ 'body': JSON.stringify(auto) }))]};
-
-
-    test('publishToTopic', async () => {
-        const spyPublishToTopic = jest.spyOn(ProductService.publishToTopic, 'ProductService.publishToTopic').mockResolvedValue({});
-        await catalogBatchProcess(event);
-        expect(spyPublishToTopic).toHaveBeenCalled();
+    beforeEach(() => {
+        ddbMock.reset();
+        snsMock.reset();
     });
 
-    test('should return 500 status code when error', async () => {
-        const spyPublishToTopic = jest.spyOn(ProductService.publishToTopic, 'ProductService.publishToTopic').mockRejectedValue({ error: 'some error'});
-        await catalogBatchProcess(event);
-        expect(spyPublishToTopic).not.toHaveBeenCalled();
-        const dummyProxyEvent: Partial<APIGatewayProxyEvent> = {
-            body: 'test',
-        };
+    test('should correct publish product', async () => {
+        const event: any = { Records: [{ 'body': JSON.stringify(AUTOS[0]) }]};
 
-        const dummyContext: Partial<Context> = {
-            functionName: "functionName"
-        };
-        const response = await main(dummyProxyEvent as any, dummyContext as Context);
+        ddbMock.on(TransactWriteCommand).resolves({});
+        snsMock.on(PublishCommand).resolves({});
+
+        const response = await catalogBatchProcess(event);
+
+        expect(response.statusCode).toBe(200);
+        expect(JSON.parse(response.body)).toEqual({
+            product: 'success'
+        })
+    });
+
+    test('should throw an error', async () => {
+        const event: any = { Records: [{ 'body': JSON.stringify(AUTOS[0]) }]};
+
+        ddbMock.on(TransactWriteCommand).resolves({});
+        snsMock.on(PublishCommand).rejects({});
+
+        const response = await catalogBatchProcess(event);
 
         expect(response.statusCode).toBe(500);
+        expect(JSON.parse(response.body)).toEqual({
+            error: {}
+        })
     });
 });
