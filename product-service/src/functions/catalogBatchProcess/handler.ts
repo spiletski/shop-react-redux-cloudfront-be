@@ -1,6 +1,7 @@
 import { formatJSONResponse } from '@libs/api-gateway';
 import {SQSEvent} from 'aws-lambda';
 import ProductService from "../../services/productService";
+import {middyfy} from "@libs/lambda";
 
 export const catalogBatchProcess = async (event: SQSEvent)=> {
   try {
@@ -14,10 +15,10 @@ export const catalogBatchProcess = async (event: SQSEvent)=> {
     }
   ));
 
-    return formatJSONResponse(200, { auto: event });
+    return formatJSONResponse(200, { product: 'success' });
   } catch (e) {
     return formatJSONResponse(500, { error: e });
   }
 };
 
-export const main = catalogBatchProcess;
+export const main = middyfy(catalogBatchProcess);
