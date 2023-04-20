@@ -1,7 +1,7 @@
 import type { AWS } from '@serverless/typescript';
 
 import importProductsFile from '@functions/importProductsFile';
-import importFileParser from "@functions/importFileParser";
+import importFileParser from '@functions/importFileParser';
 
 const serverlessConfiguration: AWS = {
   service: 'import-service',
@@ -10,7 +10,7 @@ const serverlessConfiguration: AWS = {
   plugins: ['serverless-dotenv-plugin', 'serverless-esbuild', 'serverless-offline'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs16.x',
+    runtime: 'nodejs18.x',
     region: 'us-east-1',
     stage: 'dev',
     apiGateway: {
@@ -20,27 +20,34 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      S3_BUCKET: 'task-5-myshop5',
+      S3_BUCKET: 'app-shop-bucket',
       S3_KEY_PRODUCTS: 'uploaded',
     },
-    iamRoleStatements: [
-      {
-        Effect: "Allow",
-        Action: "s3:ListBucket",
-        Resource: [
-          "arn:aws:s3:::task-5-myshop5"
-        ]
-      },
-      {
-        Effect: "Allow",
-        Action: [
-          "s3:*"
-        ],
-        Resource: [
-          "arn:aws:s3:::task-5-myshop5/*"
+    iam: {
+      role: {
+        statements: [
+          {
+            Effect: 'Allow',
+            Action: 's3:ListBucket',
+            Resource: 'arn:aws:s3:::app-shop-bucket'
+          },
+          {
+            Effect: 'Allow',
+            Action: 's3:*',
+            Resource: 'arn:aws:s3:::app-shop-bucket/*'
+          },
+          {
+            Effect: 'Allow',
+            Action: [
+                'sqs:*'
+            ],
+            Resource: [
+                'arn:aws:sqs:us-east-1:883718311022:catalogItemsQueue/*'
+            ]
+          }
         ]
       }
-    ]
+    },
   },
 
   functions: { importProductsFile, importFileParser },
@@ -51,7 +58,7 @@ const serverlessConfiguration: AWS = {
       minify: false,
       sourcemap: true,
       exclude: ['aws-sdk'],
-      target: 'node16',
+      target: 'node18',
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,

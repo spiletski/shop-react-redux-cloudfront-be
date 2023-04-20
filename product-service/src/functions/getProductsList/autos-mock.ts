@@ -1,4 +1,4 @@
-[
+export const AUTOS = [
   {
     "id": "aaa",
     "count": 1,
