@@ -57,7 +57,7 @@ export const createProduct = async (
   title: string,
   description: string,
   price: number,
-  count: number
+  count: number,
 ) => {
   const { TABLE_NAME_PRODUCTS = 'Products', TABLE_NAME_STOCKS = 'Stocks' } = process.env;
 

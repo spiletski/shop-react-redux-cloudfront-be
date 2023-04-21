@@ -11,15 +11,15 @@ export default {
         request: {
           parameters: {
             querystrings: {
-              name: true
-            }
-          }
+              name: true,
+            },
+          },
         },
         response: {
           headers: {
-            'Content-Type': 'application/json'
-          }
-        }
+            'Content-Type': 'application/json',
+          },
+        },
       },
     },
   ],

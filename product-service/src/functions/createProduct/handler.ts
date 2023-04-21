@@ -6,7 +6,7 @@ import { middyfy } from '@libs/lambda';
 import httpErrorHandler from '@middy/http-error-handler';
 
 export const createProduct = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   console.log(' createProduct ', event, event.body);
 

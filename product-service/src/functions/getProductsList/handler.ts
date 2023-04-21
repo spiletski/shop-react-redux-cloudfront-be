@@ -4,7 +4,7 @@ import ProductService from '../../services/productService';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 
 export const getProductsList = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayProxyEvent,
 ): Promise<APIGatewayProxyResult> => {
   console.log(' getProductsList ', event);
   try {
