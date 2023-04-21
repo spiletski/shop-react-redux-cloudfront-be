@@ -30,7 +30,7 @@ const serverlessConfiguration: AWS = {
           {
             Effect: 'Allow',
             Action: 'sns:*',
-            Resource: '${self:custom.SNS_ARN}'
+            Resource: '${self:custom.SNS_ARN}',
           },
           {
             Effect: 'Allow',
@@ -41,7 +41,7 @@ const serverlessConfiguration: AWS = {
               'dynamodb:PutItem',
               'dynamodb:DescribeTable',
               'dynamodb:UpdateItem',
-              'dynamodb:DeleteItem'
+              'dynamodb:DeleteItem',
             ],
             Resource: '${self:custom.PRODUCTS_TABLE}',
           },
@@ -54,12 +54,12 @@ const serverlessConfiguration: AWS = {
               'dynamodb:PutItem',
               'dynamodb:DescribeTable',
               'dynamodb:UpdateItem',
-              'dynamodb:DeleteItem'
+              'dynamodb:DeleteItem',
             ],
             Resource: '${self:custom.STOCKS_TABLE}',
-          }
-        ]
-      }
+          },
+        ],
+      },
     },
   },
   functions: { getProductsList, getProductById, createProduct, catalogBatchProcess },
@@ -83,45 +83,41 @@ const serverlessConfiguration: AWS = {
         Type: 'AWS::SQS::Queue',
         Properties: {
           QueueName: '${self:custom.SQS}',
-        }
+        },
       },
       createProductTopic: {
         Type: 'AWS::SNS::Topic',
         Properties: {
           TopicName: '${self:custom.SNS}',
-          DisplayName: 'Products Topic'
-        }
+          DisplayName: 'Products Topic',
+        },
       },
       snsKiaSubscription: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
-          Endpoint : 'bye-bye@tut.by',
-          Protocol : 'email',
-          TopicArn : { 'Ref' : 'createProductTopic' },
+          Endpoint: 'bye-bye@tut.by',
+          Protocol: 'email',
+          TopicArn: { Ref: 'createProductTopic' },
           FilterPolicyScope: 'MessageBody',
           FilterPolicy: {
-            title: [
-              'kia'
-            ]
-          }
+            title: ['kia'],
+          },
         },
       },
       snsBmwSubscription: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
-          Endpoint : 'stanislau@mail.ru',
-          Protocol : 'email',
-          TopicArn : { 'Ref' : 'createProductTopic' },
+          Endpoint: 'stanislau@mail.ru',
+          Protocol: 'email',
+          TopicArn: { Ref: 'createProductTopic' },
           FilterPolicyScope: 'MessageBody',
           FilterPolicy: {
-            title: [
-              'bmw'
-            ]
-          }
+            title: ['bmw'],
+          },
         },
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;

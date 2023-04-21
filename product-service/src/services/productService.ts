@@ -4,7 +4,7 @@ import { getAllRows, getRowById, createProduct } from '../db/queries';
 import * as process from 'process';
 import { formatJSONResponse } from '@libs/api-gateway';
 import { PublishCommand, SNSClient } from '@aws-sdk/client-sns';
-import * as console from "console";
+import * as console from 'console';
 
 const ProductService = {
   async getProductsList() {
@@ -49,21 +49,21 @@ const ProductService = {
     }
   },
   async publishToTopic(product) {
-    const { CREATE_PRODUCT_TOPIC, REGION} = process.env;
+    const { CREATE_PRODUCT_TOPIC, REGION } = process.env;
 
     try {
       const snsClient = new SNSClient({ region: REGION });
       const params = {
         Message: product,
-        TopicArn: CREATE_PRODUCT_TOPIC
+        TopicArn: CREATE_PRODUCT_TOPIC,
       };
       console.log(' publishToTopic ', params);
       await snsClient.send(new PublishCommand(params));
     } catch (err) {
-      console.log("Error", err);
+      console.log('Error', err);
       throw err;
     }
-  }
+  },
 };
 
 export default ProductService;
