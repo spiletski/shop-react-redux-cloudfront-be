@@ -10,7 +10,7 @@ const serverlessConfiguration: AWS = {
   plugins: ['serverless-dotenv-plugin', 'serverless-esbuild', 'serverless-offline'],
   provider: {
     name: 'aws',
-    runtime: 'nodejs18.x',
+    runtime: 'nodejs14.x',
     region: 'us-east-1',
     stage: 'dev',
     apiGateway: {
@@ -58,12 +58,45 @@ const serverlessConfiguration: AWS = {
       minify: false,
       sourcemap: true,
       exclude: ['aws-sdk'],
-      target: 'node18',
+      target: 'node14',
       define: { 'require.resolve': undefined },
       platform: 'node',
       concurrency: 10,
     },
   },
+  resources: {
+    Resources: {
+      GatewayResponseUnauthorized: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.WWW-Authenticate': "'Basic'",
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'"
+          },
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'UNAUTHORIZED',
+          StatusCode: '401'
+        }
+      },
+      GatewayResponseForbidden: {
+        Type: 'AWS::ApiGateway::GatewayResponse',
+        Properties: {
+          ResponseParameters: {
+            'gatewayresponse.header.Access-Control-Allow-Origin': "'*'",
+            'gatewayresponse.header.Access-Control-Allow-Headers': "'*'"
+          },
+          RestApiId: {
+            Ref: 'ApiGatewayRestApi'
+          },
+          ResponseType: 'ACCESS_DENIED',
+          StatusCode: '403'
+        }
+      }
+    }
+  }
 };
 
 module.exports = serverlessConfiguration;
